@@ -7,7 +7,9 @@
     "build": "tsc --build",
     "start": "node --env-file=.env ./dist/index.js",
     "dev": "nodemon --exec npx tsx --env-file=.env ./src/index.ts",
-    "prettier": "npx prettier . --write"
+    "prettier": "npx prettier . --write",
+    "prisma": "npx prisma migrate dev",
+    "prisma:studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "Villy15",

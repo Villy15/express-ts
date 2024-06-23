@@ -23,6 +23,33 @@ export const getUsers = async (
   }
 };
 
+// Read a single user
+/**
+ * @desc Get a single user
+ * @route GET /api/users/:id
+ */
+export const getUser = async (
+  req: Request<{ id: string }>,
+  res: Response<User>,
+  next: NextFunction
+) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(req.params.id),
+      },
+    });
+
+    if (!user) {
+      throw new HttpError('User not found', 404);
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    handleError(err, next);
+  }
+};
+
 // addUser
 /**
  * @desc Add a new user
