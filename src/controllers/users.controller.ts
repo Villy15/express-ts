@@ -1,9 +1,9 @@
-import { Prisma, User } from "@prisma/client";
-import { NextFunction, Request, Response } from "express-serve-static-core";
+import { Prisma, User } from '@prisma/client';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
-import prisma from "../prisma";
-import handleError from "../utils/handle-error";
-import HttpError from "../utils/http-error";
+import prisma from '../prisma';
+import handleError from '../utils/handle-error';
+import HttpError from '../utils/http-error';
 
 /**
  * @desc Get all posts
@@ -36,7 +36,7 @@ export const addUser = async (
   try {
     // Check if input is valid
     if (!req.body.name || !req.body.email) {
-      throw new HttpError("Please provide a name and an email", 400);
+      throw new HttpError('Please provide a name and an email', 400);
     }
 
     const user = await prisma.user.create({
@@ -95,7 +95,7 @@ export const deleteUser = async (
       },
     });
 
-    res.status(200).json({ message: "User deleted" });
+    res.status(200).json({ message: 'User deleted' });
   } catch (err) {
     handleError(err, next);
   }

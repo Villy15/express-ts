@@ -1,5 +1,5 @@
-import colors from "colors";
-import { NextFunction, Request, Response } from "express-serve-static-core";
+import colors from 'colors';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 type Color = (text: string) => string;
 
@@ -19,7 +19,7 @@ const logger = (req: Request, res: Response, next: NextFunction) => {
 
   console.log(
     color(
-      `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl}`
+      `${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`
     )
   );
 

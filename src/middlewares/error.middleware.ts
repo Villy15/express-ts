@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express-serve-static-core";
-import { ErrorHandler } from "../types/error";
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { ErrorHandler } from '../types/error';
 
 // Ignore the ts error for now
 export const errorHandler = (
@@ -11,7 +11,7 @@ export const errorHandler = (
   if (err.status) {
     res.status(err.status).json({ message: err.message });
   } else {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
