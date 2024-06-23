@@ -1,5 +1,9 @@
+import { Prisma, User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express-serve-static-core";
-import { CreateUserBody, CreateUserQuery, User } from "../types/users.type";
+
+import prisma from "../prisma";
+import handleError from "../utils/handle-error";
+import HttpError from "../utils/http-error";
 
 /**
  * @desc Get all posts
@@ -11,27 +15,11 @@ export const getUsers = async (
   next: NextFunction
 ) => {
   try {
-    // Sample data
-    const rows = [
-      {
-        id: 1,
-        name: "John Doe",
-        email: "adrianvill07@gmail.com",
-      },
-    ];
+    const users = await prisma.user.findMany();
 
-    res.status(200).json(rows);
+    res.status(200).json(users);
   } catch (err) {
-    if (err instanceof Error) {
-      const error = new Error(err.message);
-      (error as any).status = 400;
-      return next(error);
-    }
-
-    // If err is not an instance of Error, return a generic error
-    const error = new Error("An unknown error occurred");
-    (error as any).status = 400;
-    return next(error);
+    handleError(err, next);
   }
 };
 
@@ -41,40 +29,74 @@ export const getUsers = async (
  * @route POST /api/users
  */
 export const addUser = async (
-  req: Request<{}, {}, CreateUserBody, CreateUserQuery>,
+  req: Request<{}, {}, Prisma.UserCreateInput>,
   res: Response<User>,
   next: NextFunction
 ) => {
   try {
-    const { name, email, password } = req.body;
-
-    console.log(req.body);
-
-    // if empty
-    if (!name || !email || !password) {
-      const error = new Error("Please provide name, email and password");
-      (error as any).status = 400;
-      return next(error);
+    // Check if input is valid
+    if (!req.body.name || !req.body.email) {
+      throw new HttpError("Please provide a name and an email", 400);
     }
 
-    // Sample data
-    const row = {
-      id: 1,
-      name,
-      email,
-    };
+    const user = await prisma.user.create({
+      data: {
+        name: req.body.name,
+        email: req.body.email,
+      },
+    });
 
-    res.status(200).json(row);
+    res.status(201).json(user);
   } catch (err) {
-    if (err instanceof Error) {
-      const error = new Error(err.message);
-      (error as any).status = 400;
-      return next(error);
-    }
+    handleError(err, next);
+  }
+};
 
-    // If err is not an instance of Error, return a generic error
-    const error = new Error("An unknown error occurred");
-    (error as any).status = 400;
-    return next(error);
+// updateUser
+/**
+ * @desc Update a user
+ * @route PUT /api/users/:id
+ */
+export const updateUser = async (
+  req: Request<{ id: string }, {}, Prisma.UserUpdateInput>,
+  res: Response<User>,
+  next: NextFunction
+) => {
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id: parseInt(req.params.id),
+      },
+      data: {
+        name: req.body.name,
+      },
+    });
+
+    res.status(200).json(user);
+  } catch (err) {
+    handleError(err, next);
+  }
+};
+
+// deleteUser
+/**
+ * @desc Delete a user
+ * @route DELETE /api/users/:id
+ */
+export const deleteUser = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: parseInt(req.params.id),
+      },
+    });
+
+    res.status(200).json({ message: "User deleted" });
+  } catch (err) {
+    handleError(err, next);
   }
 };

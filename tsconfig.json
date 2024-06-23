@@ -10,5 +10,6 @@
     "outDir": "./dist",
     "noImplicitAny": true,
     "strictNullChecks": true
-  }
+  },
+  "include": ["src/**/*.ts"]
 }
