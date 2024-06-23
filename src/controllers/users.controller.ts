@@ -17,7 +17,7 @@ export const getUsers = async (
   try {
     const users = await prisma.user.findMany();
 
-    res.status(200).json(users);
+    res.status(200).send(users);
   } catch (err) {
     handleError(err, next);
   }
