@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { Request, Response } from 'express-serve-static-core';
+import errorHandler from '../middlewares/error.middleware';
 
 export const mockRequest = {} as Request;
 
@@ -7,4 +8,8 @@ export const mockResponse = {
   send: jest.fn(),
 } as unknown as Response;
 
-export const mockNext = jest.fn() as unknown as NextFunction;
+export const mockNext = jest
+  .fn()
+  .mockImplementation(err =>
+    errorHandler(err, mockRequest, mockResponse, jest.fn())
+  );

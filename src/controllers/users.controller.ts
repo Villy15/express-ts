@@ -17,6 +17,10 @@ export const getUsers = async (
   try {
     const users = await prisma.user.findMany();
 
+    if (users.length === 0) {
+      throw new HttpError('No users found', 404);
+    }
+
     res.status(200).send(users);
   } catch (err) {
     handleError(err, next);
@@ -44,7 +48,7 @@ export const getUser = async (
       throw new HttpError('User not found', 404);
     }
 
-    res.status(200).json(user);
+    res.status(200).send(user);
   } catch (err) {
     handleError(err, next);
   }
@@ -68,12 +72,13 @@ export const addUser = async (
 
     const user = await prisma.user.create({
       data: {
-        name: req.body.name,
         email: req.body.email,
+        name: req.body.name,
+        last_name: req.body.last_name,
       },
     });
 
-    res.status(201).json(user);
+    res.status(201).send(user);
   } catch (err) {
     handleError(err, next);
   }
@@ -90,18 +95,38 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   try {
+    const { id } = req.params;
+    const updateData: Prisma.UserUpdateInput = {};
+
+    // Dynamically add fields to updateData if they are provided in the request body
+    if (req.body.name) updateData.name = req.body.name;
+    if (req.body.last_name) updateData.last_name = req.body.last_name;
+
+    // Check if at least one field is provided for update
+    if (Object.keys(updateData).length === 0) {
+      throw new HttpError(
+        'Please provide at least one field to update (name, last name)',
+        400
+      );
+    }
+
     const user = await prisma.user.update({
       where: {
-        id: parseInt(req.params.id),
+        id: parseInt(id),
       },
-      data: {
-        name: req.body.name,
-      },
+      data: updateData,
     });
 
-    res.status(200).json(user);
+    res.status(200).send(user);
   } catch (err) {
-    handleError(err, next);
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === 'P2025'
+    ) {
+      handleError(new HttpError('User not found', 404), next);
+    } else {
+      handleError(err, next);
+    }
   }
 };
 
@@ -122,7 +147,26 @@ export const deleteUser = async (
       },
     });
 
-    res.status(200).json({ message: 'User deleted' });
+    res.status(200).send({ message: 'User deleted' });
+  } catch (err) {
+    handleError(err, next);
+  }
+};
+
+// Delete all users
+/**
+ * @desc Delete all users
+ * @route DELETE /api/users
+ */
+export const deleteAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await prisma.user.deleteMany();
+
+    res.status(200).send({ message: 'All users deleted' });
   } catch (err) {
     handleError(err, next);
   }
