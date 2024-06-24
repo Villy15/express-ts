@@ -10,6 +10,7 @@ import logger from './middlewares/logger.middleware';
 import notFound from './middlewares/not-found.middlware';
 
 // Import routes
+import posts from './routes/posts.route';
 import users from './routes/users.route';
 
 const app = express();
@@ -69,6 +70,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Routes
 app.use('/api/users', users);
+app.use('/api/posts', posts);
 
 // Catch all error
 app.use(notFound);

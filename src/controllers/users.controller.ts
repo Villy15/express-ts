@@ -1,7 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
 
-import prisma from '../prisma';
+import prisma from '../prisma/prisma-client';
 import handleError from '../utils/handle-error';
 import HttpError from '../utils/http-error';
 

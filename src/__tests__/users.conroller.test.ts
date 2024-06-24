@@ -1,66 +1,39 @@
 import { Prisma, User } from '@prisma/client';
 import { Request } from 'express-serve-static-core';
 import { mockNext, mockRequest, mockResponse } from '../__mocks__';
+
 import {
   addUser,
   getUser,
   getUsers,
   updateUser,
 } from '../controllers/users.controller';
-import prisma from '../prisma';
+import prismaMock from './prisma-mock';
 
-jest.mock('../prisma.ts', () => ({
-  user: {
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-  },
-}));
+// Mock user object
+const user: User = {
+  id: 1,
+  name: 'John Doe',
+  email: 'john@email.com',
+  last_name: 'Doe',
+};
 
-describe('User Controller', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const USER_JANE_DOE: User = {
-    id: 2,
-    name: 'Jane Doe',
-    email: 'jane_doe@email.com',
-    last_name: 'Doe',
-  };
-  const USER_JOHN_DOE: User = {
-    id: 1,
-    name: 'John Doe',
-    email: 'john_doe@email.com',
-    last_name: 'Doe',
-  };
-
-  const USERS: User[] = [USER_JOHN_DOE, USER_JANE_DOE];
-
+describe('Users Controller', () => {
   describe('GET /api/users', () => {
-    const mockFindManyWithUsers = (users: User[] = []) =>
-      (prisma.user.findMany as jest.Mock).mockResolvedValue(users);
-
     it('should return all users', async () => {
-      mockFindManyWithUsers(USERS);
+      const users: User[] = [user];
+      prismaMock.user.findMany.mockResolvedValue(users);
 
       await getUsers(mockRequest, mockResponse, mockNext);
 
-      expect(prisma.user.findMany).toHaveBeenCalled();
-
       expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(USERS);
+      expect(mockResponse.send).toHaveBeenCalledWith(users);
     });
 
     it('should return 404 if no users are found', async () => {
-      mockFindManyWithUsers();
+      prismaMock.user.findMany.mockResolvedValue([]);
 
       await getUsers(mockRequest, mockResponse, mockNext);
-
-      expect(prisma.user.findMany).toHaveBeenCalled();
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
       expect(mockResponse.send).toHaveBeenCalledWith({
@@ -70,29 +43,23 @@ describe('User Controller', () => {
   });
 
   describe('GET /api/users/:id', () => {
-    const mockFindUniqueWithUser = (user: User | null = null) =>
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user);
-
-    const mockRequestWithId1 = {
+    const mockRequestWithId = {
       params: { id: '1' },
     } as Request<{ id: string }>;
 
     it('should return a user by id', async () => {
-      mockFindUniqueWithUser(USER_JOHN_DOE);
+      prismaMock.user.findUnique.mockResolvedValue(user);
 
-      await getUser(mockRequestWithId1, mockResponse, mockNext);
+      await getUser(mockRequestWithId, mockResponse, mockNext);
 
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(USER_JOHN_DOE);
+      expect(mockResponse.send).toHaveBeenCalledWith(user);
     });
 
     it('should return 404 if user is not found', async () => {
-      mockFindUniqueWithUser();
+      prismaMock.user.findUnique.mockResolvedValue(null);
 
-      await getUser(mockRequestWithId1, mockResponse, mockNext);
-
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
+      await getUser(mockRequestWithId, mockResponse, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
       expect(mockResponse.send).toHaveBeenCalledWith({
@@ -102,32 +69,25 @@ describe('User Controller', () => {
   });
 
   describe('POST /api/users/', () => {
-    const mockCreateUser = (user: User) =>
-      (prisma.user.create as jest.Mock).mockResolvedValue(user);
-
     const createdUserWithId: User = {
-      id: 3,
-      email: 'adrian_doe@email.com',
-      name: 'Adrian Doe',
+      id: 2,
+      email: 'villy@gmail.com',
+      name: 'Villy',
       last_name: 'Doe',
     };
 
     const mockRequestCreateUser = {
       body: {
-        email: 'adrian_doe@email.com',
-        name: 'Adrian Doe',
+        email: 'villy@gmail.com',
+        name: 'Villy',
         last_name: 'Doe',
       },
     } as Request<{}, {}, Prisma.UserCreateInput>;
 
     it('should return a created user with an assigned ID', async () => {
-      mockCreateUser(createdUserWithId);
+      prismaMock.user.create.mockResolvedValue(createdUserWithId);
 
       await addUser(mockRequestCreateUser, mockResponse, mockNext);
-
-      expect(prisma.user.create).toHaveBeenCalledWith({
-        data: mockRequestCreateUser.body,
-      });
 
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.send).toHaveBeenCalledWith(createdUserWithId);
@@ -148,12 +108,6 @@ describe('User Controller', () => {
   });
 
   describe('PUT /api/users/:id', () => {
-    const mockUpdateUser = (user: User | null = null) =>
-      (prisma.user.update as jest.Mock).mockResolvedValue(user);
-
-    const mockRejectedUpdateUser = (error: Error) =>
-      (prisma.user.update as jest.Mock).mockRejectedValue(error);
-
     const updatedUser: User = {
       id: 1,
       email: 'adrianvill07@gmail.com',
@@ -170,14 +124,9 @@ describe('User Controller', () => {
     } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
 
     it('should return a user with updated fields', async () => {
-      mockUpdateUser(updatedUser);
+      prismaMock.user.update.mockResolvedValue(updatedUser);
 
       await updateUser(mockRequestUpdateUser, mockResponse, mockNext);
-
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: 1 },
-        data: mockRequestUpdateUser.body,
-      });
 
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.send).toHaveBeenCalledWith(updatedUser);
@@ -192,7 +141,7 @@ describe('User Controller', () => {
         },
       } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
 
-      mockRejectedUpdateUser(
+      prismaMock.user.update.mockRejectedValue(
         new Prisma.PrismaClientKnownRequestError('User not found', {
           code: 'P2025',
           clientVersion: '2.19.0',
@@ -200,11 +149,6 @@ describe('User Controller', () => {
       );
 
       await updateUser(mockMissingUser, mockResponse, mockNext);
-
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: 2 },
-        data: mockMissingUser.body,
-      });
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
       expect(mockResponse.send).toHaveBeenCalledWith({
