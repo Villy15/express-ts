@@ -11,9 +11,9 @@ const errorHandler = (
   next: NextFunction
 ) => {
   if (err.status) {
-    res.status(err.status).send({ message: err.message });
+    res.status(err.status).send({ error: err.message });
   } else {
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ error: 'Internal Server Error' });
   }
 };
 

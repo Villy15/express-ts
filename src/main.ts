@@ -1,15 +1,14 @@
 import express from 'express';
 import path from 'path';
 
-import corsOptions from './app/middlewares/cors.middleware';
-import errorHandler from './app/middlewares/error.middleware';
-import helmetConfig from './app/middlewares/helmet.middleware';
-import logger from './app/middlewares/logger.middleware';
-import notFound from './app/middlewares/not-found.middlware';
-import sessionConfig from './app/middlewares/session.middleware';
+import corsOptions from './middlewares/cors.middleware';
+import errorHandler from './middlewares/error.middleware';
+import helmetConfig from './middlewares/helmet.middleware';
+import logger from './middlewares/logger.middleware';
+import notFound from './middlewares/not-found.middlware';
+import sessionConfig from './middlewares/session.middleware';
 
-import posts from './app/routes/posts.route';
-import users from './app/routes/users.route';
+import router from './app/routes/routes';
 
 const app = express();
 
@@ -29,8 +28,7 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-app.use('/api/users', users);
-app.use('/api/posts', posts);
+app.use(router);
 
 // Catch all error
 app.use(notFound);

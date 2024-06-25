@@ -1,13 +1,12 @@
 import { Prisma, User } from '@prisma/client';
-import { Request } from 'express-serve-static-core';
-import { mockNext, mockRequest, mockResponse } from './mocks/mocks';
 
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import {
-  addUser,
+  createUser,
   getUser,
   getUsers,
   updateUser,
-} from '../app/controllers/users.controller';
+} from '../app/api/users/users.services';
 import prismaMock from './mocks/prisma-mock';
 
 // Mock user object
@@ -18,157 +17,121 @@ const user: User = {
   last_name: 'Doe',
 };
 
-describe('Users Controller', () => {
-  describe('GET /api/users', () => {
+const userInput: Prisma.UserCreateInput = {
+  name: 'Jame Doe',
+  email: 'jame@email.com',
+  last_name: 'Doe',
+};
+
+const createdUser: User = {
+  id: 1,
+  name: 'Jame Doe',
+  email: 'jame@email.com',
+  last_name: 'Doe',
+};
+
+describe('Users Services', () => {
+  describe('getUsers', () => {
     it('should return all users', async () => {
       const users: User[] = [user];
+
       prismaMock.user.findMany.mockResolvedValue(users);
 
-      await getUsers(mockRequest, mockResponse, mockNext);
+      const result = await getUsers();
 
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(users);
+      expect(result).toEqual(users);
+      expect(prismaMock.user.findMany).toHaveBeenCalled();
     });
 
-    it('should return 404 if no users are found', async () => {
+    it('should throw an error if no users are found', async () => {
       prismaMock.user.findMany.mockResolvedValue([]);
 
-      await getUsers(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message: 'No users found',
-      });
+      await expect(getUsers()).rejects.toThrow('No users found');
     });
   });
 
-  describe('GET /api/users/:id', () => {
-    const mockRequestWithId = {
-      params: { id: '1' },
-    } as Request<{ id: string }>;
-
+  describe('getUser', () => {
     it('should return a user by id', async () => {
       prismaMock.user.findUnique.mockResolvedValue(user);
 
-      await getUser(mockRequestWithId, mockResponse, mockNext);
+      const result = await getUser(user.id);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(user);
+      expect(result).toEqual(user);
+      expect(prismaMock.user.findUnique).toHaveBeenCalled();
     });
 
-    it('should return 404 if user is not found', async () => {
+    it('should throw an error if user is not found', async () => {
       prismaMock.user.findUnique.mockResolvedValue(null);
 
-      await getUser(mockRequestWithId, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message: 'User not found',
-      });
+      await expect(getUser(user.id)).rejects.toThrow('User not found');
     });
   });
 
-  describe('POST /api/users/', () => {
-    const createdUserWithId: User = {
-      id: 2,
-      email: 'villy@gmail.com',
-      name: 'Villy',
-      last_name: 'Doe',
-    };
-
-    const mockRequestCreateUser = {
-      body: {
-        email: 'villy@gmail.com',
-        name: 'Villy',
-        last_name: 'Doe',
-      },
-    } as Request<{}, {}, Prisma.UserCreateInput>;
-
+  describe('createUser', () => {
     it('should return a created user with an assigned ID', async () => {
-      prismaMock.user.create.mockResolvedValue(createdUserWithId);
+      prismaMock.user.create.mockResolvedValue(createdUser);
 
-      await addUser(mockRequestCreateUser, mockResponse, mockNext);
+      const result = await createUser(userInput);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(201);
-      expect(mockResponse.send).toHaveBeenCalledWith(createdUserWithId);
+      expect(result).toEqual(createdUser);
+      expect(prismaMock.user.create).toHaveBeenCalled();
     });
 
-    it('should return 400 if no name and email provided', async () => {
-      const mockRequestMissingFields = {
-        body: {},
-      } as Request<{}, {}, Prisma.UserCreateInput>;
-
-      await addUser(mockRequestMissingFields, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message: 'Please provide a name and an email',
-      });
+    it('should throw an error if no name and email provided', async () => {
+      await expect(createUser({} as Prisma.UserCreateInput)).rejects.toThrow(
+        'Please provide a name and an email'
+      );
     });
   });
 
-  describe('PUT /api/users/:id', () => {
-    const updatedUser: User = {
-      id: 1,
-      email: 'adrianvill07@gmail.com',
-      last_name: 'Doe',
-      name: 'Adrian Villalba',
-    };
+  describe('updateUser', () => {
+    // const updatedUser: User = {
+    //   id: 1,
+    //   email: 'adrianvill07@gmail.com',
+    //   last_name: 'Doe',
+    //   name: 'Adrian Villalba',
+    // };
 
-    const mockRequestUpdateUser = {
-      params: { id: '1' },
-      body: {
-        name: 'Adrian Doe',
-        last_name: 'Doe',
-      },
-    } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
+    // const mockRequestUpdateUser = {
+    //   params: { id: '1' },
+    //   body: {
+    //     name: 'Adrian Doe',
+    //     last_name: 'Doe',
+    //   },
+    // } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
 
     it('should return a user with updated fields', async () => {
-      prismaMock.user.update.mockResolvedValue(updatedUser);
+      prismaMock.user.update.mockResolvedValue(user);
 
-      await updateUser(mockRequestUpdateUser, mockResponse, mockNext);
+      const updatedUser = await updateUser(1, {
+        name: 'Adrian Doe',
+        last_name: 'Doe',
+      });
 
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(updatedUser);
+      expect(updatedUser).toEqual(user);
+      expect(prismaMock.user.update).toHaveBeenCalled();
     });
 
-    it('should return 404 if user is not found', async () => {
-      const mockMissingUser = {
-        params: { id: '2' },
-        body: {
-          name: 'Adrian Doe',
-          last_name: 'Doe',
-        },
-      } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
-
+    it('should throw an error if user is not found', async () => {
       prismaMock.user.update.mockRejectedValue(
-        new Prisma.PrismaClientKnownRequestError('User not found', {
+        new PrismaClientKnownRequestError('User not found', {
           code: 'P2025',
-          clientVersion: '2.19.0',
+          clientVersion: '5.15.1',
         })
       );
 
-      await updateUser(mockMissingUser, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message: 'User not found',
-      });
+      await expect(
+        updateUser(9999, {
+          name: 'Adrian Doe',
+          last_name: 'Doe',
+        } as Prisma.UserUpdateInput)
+      ).rejects.toThrow('User not found');
     });
 
-    it('should return 400 if no name, email, and last_name provided', async () => {
-      const mockRequestMissingFields = {
-        params: { id: '1' },
-        body: {},
-      } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
-
-      await updateUser(mockRequestMissingFields, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message:
-          'Please provide at least one field to update (name, last name)',
-      });
+    it('should throw an error if no fields are provided', async () => {
+      await expect(updateUser(1, {} as Prisma.UserUpdateInput)).rejects.toThrow(
+        'Please provide at least one field to update (name, last name)'
+      );
     });
   });
 });

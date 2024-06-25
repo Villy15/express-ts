@@ -1,8 +1,6 @@
 import { Post } from '@prisma/client';
-import { Request } from 'express-serve-static-core';
-import { mockNext, mockRequest, mockResponse } from './mocks/mocks';
 
-import { getPost, getPosts } from '../app/controllers/posts.controller';
+import { getPost, getPosts } from '../app/api/posts/posts.services';
 import prismaMock from './mocks/prisma-mock';
 
 // Mock post object
@@ -17,54 +15,40 @@ const post: Post = {
   viewCount: 0,
 };
 
-describe('Posts Controller', () => {
-  describe('GET /api/posts', () => {
+describe('Post Services', () => {
+  describe('getPosts', () => {
     it('should return all posts', async () => {
       const posts: Post[] = [post];
 
       prismaMock.post.findMany.mockResolvedValue(posts);
 
-      await getPosts(mockRequest, mockResponse, mockNext);
+      const result = await getPosts();
 
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(posts);
+      expect(result).toEqual(posts);
+      expect(prismaMock.post.findMany).toHaveBeenCalled();
     });
 
-    it('should return 404 if no posts are found', async () => {
+    it('should throw an error if no posts are found', async () => {
       prismaMock.post.findMany.mockResolvedValue([]);
 
-      await getPosts(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message: 'No posts found',
-      });
+      await expect(getPosts()).rejects.toThrow('No posts found');
     });
   });
 
-  describe('GET /api/posts/:id', () => {
-    const mockRequestWithId = {
-      params: { id: '1' },
-    } as Request<{ id: string }>;
-
+  describe('getPost', () => {
     it('should return a post by id', async () => {
       prismaMock.post.findUnique.mockResolvedValue(post);
 
-      await getPost(mockRequestWithId, mockResponse, mockNext);
+      const result = await getPost(post.id);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.send).toHaveBeenCalledWith(post);
+      expect(result).toEqual(post);
+      expect(prismaMock.post.findUnique).toHaveBeenCalled();
     });
 
-    it('should return 404 if no post is found', async () => {
+    it('should throw an error if post is not found', async () => {
       prismaMock.post.findUnique.mockResolvedValue(null);
 
-      await getPost(mockRequestWithId, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        message: 'Post not found',
-      });
+      await expect(getPost(post.id)).rejects.toThrow('Post not found');
     });
   });
 });
