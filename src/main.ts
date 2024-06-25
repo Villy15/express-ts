@@ -9,6 +9,9 @@ import notFound from './middlewares/not-found.middlware';
 import sessionConfig from './middlewares/session.middleware';
 
 import router from './app/routes/routes';
+import swaggerDocs from './utils/swagger';
+
+const port = process.env.PORT || 5000;
 
 const app = express();
 
@@ -27,6 +30,9 @@ app.get('/', (req, res) => {
   res.send({ message: 'API is running on /api' });
 });
 
+//
+swaggerDocs(app, port);
+
 // Routes
 app.use(router);
 
@@ -39,8 +45,6 @@ app.use(errorHandler);
 /**
  * Server Activation
  */
-const port = process.env.PORT || 5000;
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

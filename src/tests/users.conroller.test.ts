@@ -85,21 +85,6 @@ describe('Users Services', () => {
   });
 
   describe('updateUser', () => {
-    // const updatedUser: User = {
-    //   id: 1,
-    //   email: 'adrianvill07@gmail.com',
-    //   last_name: 'Doe',
-    //   name: 'Adrian Villalba',
-    // };
-
-    // const mockRequestUpdateUser = {
-    //   params: { id: '1' },
-    //   body: {
-    //     name: 'Adrian Doe',
-    //     last_name: 'Doe',
-    //   },
-    // } as Request<{ id: string }, {}, Prisma.UserUpdateInput>;
-
     it('should return a user with updated fields', async () => {
       prismaMock.user.update.mockResolvedValue(user);
 
