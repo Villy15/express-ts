@@ -11,7 +11,7 @@ const log = logger({
       colorize: true,
     },
   },
-  timestamp: () => `,"time":"${dayjs().format()}"`,
+  timestamp: () => `,"time":"${dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ')}"`,
 });
 
 export default log;
