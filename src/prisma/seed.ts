@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import log from '../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -49,14 +50,14 @@ const userData: Prisma.UserCreateInput[] = [
 ];
 
 async function main() {
-  console.log(`Start seeding ...`);
+  log.info(`Start seeding ...`);
   for (const u of userData) {
     const user = await prisma.user.create({
       data: u,
     });
-    console.log(`Created user with id: ${user.id}`);
+    log.info(`Created user with id: ${user.id}`);
   }
-  console.log(`Seeding finished.`);
+  log.info(`Seeding finished.`);
 }
 
 main()
