@@ -15,14 +15,14 @@ const swaggerTags = [
 ];
 
 const options: swaggerJsdoc.Options = {
-  definition: {
+  swaggerDefinition: {
     openapi: '3.0.0',
     info: {
       title: 'Express-Typscript API',
       termsOfService: 'https://smartbear.com/terms-of-use/',
       version,
       description:
-        'This is an API documentation from the Express-Typescript github repository.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.',
+        'This is an API documentation from the Express-Typescript github repository. For this sample, you can use the api key `special-key` to test the authorization filters.',
       contact: {
         email: 'adrianvill07@gmail.com',
       },
@@ -31,31 +31,47 @@ const options: swaggerJsdoc.Options = {
         url: 'https://opensource.org/licenses/ISC',
       },
     },
+    servers: [
+      {
+        url: 'http://localhost:8080/',
+        description: 'Development server',
+      },
+      {
+        url: 'http://localhost:3000/',
+        description: 'Production server',
+      },
+    ],
     components: {
       securitySchemes: {
-        bearerAuth: {
+        api_key: {
+          type: 'apiKey',
+          name: 'api_key',
+          in: 'header',
+        },
+        app_auth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
+          name: 'app_auth',
+          description: 'Bearer token for authentication',
         },
       },
     },
     security: [
       {
-        bearerAuth: [],
+        api_key: [],
+      },
+      {
+        app_auth: [],
       },
     ],
-    host: 'localhost:3000',
-    basePath: '/',
     tags: swaggerTags,
-    schemes: ['https', 'http'],
     externalDocs: {
       description: 'Find out more about this API',
       url: 'https://github.com/Villy15/express-ts',
     },
-    consumes: ['application/json'],
-    produces: ['application/json'],
   },
+
   apis: ['./src/app/api/**/*.ts'],
 };
 

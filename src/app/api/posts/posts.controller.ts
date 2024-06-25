@@ -39,18 +39,20 @@ const router = Router();
  * @openapi
  * /api/posts:
  *   get:
+ *     summary: Get all posts
  *     tags:
  *       - posts
- *     description: Get all posts
  *     responses:
  *       200:
  *         description: Returns all posts
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Post'
+ *               $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.get('/posts', async (req, res: Response<Post[]>, next) => {
   try {
@@ -65,25 +67,27 @@ router.get('/posts', async (req, res: Response<Post[]>, next) => {
  * @openapi
  * /api/posts/{id}:
  *   get:
+ *     summary: Get posts by id
  *     tags:
  *       - posts
- *     description: Get a single post by ID
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The post ID
+ *         description: posts id
  *     responses:
  *       200:
- *         description: Returns a single post
+ *         description: Returns posts by id
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Post'
  *       404:
  *         description: Post not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.get(
   '/posts/:id',
@@ -103,7 +107,7 @@ router.get(
  *   post:
  *     tags:
  *       - posts
- *     description: Create a new post
+ *     summary: Create a new post
  *     requestBody:
  *       required: true
  *       content:
@@ -115,10 +119,12 @@ router.get(
  *                 type: string
  *               content:
  *                 type: string
- 
+ *               email:
+ *                type: string
  *             required:
  *               - title
  *               - content
+ *               - email
  *     responses:
  *       201:
  *         description: The created post
