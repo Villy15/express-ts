@@ -2,17 +2,23 @@
   "name": "express-ts",
   "version": "1.0.0",
   "description": "Express with TypeScript",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "jest",
     "build": "tsc --build",
-    "start": "node --env-file=.env ./dist/index.js",
-    "dev": "nodemon --exec npx tsx --env-file=.env ./src/index.ts",
+    "start": "node --env-file=.env ./dist/main.js",
+    "dev": "nodemon --exec npx tsx --env-file=.env ./src/main.ts",
     "prettier": "npx prettier . --write",
     "prisma": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio"
   },
-  "keywords": [],
+  "keywords": [
+    "typescript",
+    "express",
+    "prisma",
+    "api",
+    "rest"
+  ],
   "author": "Villy15",
   "license": "ISC",
   "prisma": {

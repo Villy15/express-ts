@@ -1,9 +1,9 @@
 import { Post } from '@prisma/client';
 import { Request } from 'express-serve-static-core';
-import { mockNext, mockRequest, mockResponse } from '../__mocks__';
+import { mockNext, mockRequest, mockResponse } from './mocks/mocks';
 
-import { getPost, getPosts } from '../controllers/posts.controller';
-import prismaMock from './prisma-mock';
+import { getPost, getPosts } from '../app/controllers/posts.controller';
+import prismaMock from './mocks/prisma-mock';
 
 // Mock post object
 const post: Post = {

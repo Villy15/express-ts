@@ -12,14 +12,19 @@ const logger = (req: Request, res: Response, next: NextFunction) => {
     GET: colors.green,
     POST: colors.blue,
     PUT: colors.yellow,
-    DELETE: colors.white,
+    DELETE: colors.red,
   };
 
   const color = methodColors[req.method] || colors.white;
 
+  // Format the current time
+  const currentTime = new Date().toLocaleString('en-US', {
+    timeZone: 'Asia/Manila',
+  });
+
   console.log(
     color(
-      `${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`
+      `[${currentTime}] ${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`
     )
   );
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express-serve-static-core';
-import errorHandler from '../middlewares/error.middleware';
+import errorHandler from '../../app/middlewares/error.middleware';
 
 export const mockRequest = {} as Request;
 

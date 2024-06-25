@@ -1,14 +1,14 @@
 import { Prisma, User } from '@prisma/client';
 import { Request } from 'express-serve-static-core';
-import { mockNext, mockRequest, mockResponse } from '../__mocks__';
+import { mockNext, mockRequest, mockResponse } from './mocks/mocks';
 
 import {
   addUser,
   getUser,
   getUsers,
   updateUser,
-} from '../controllers/users.controller';
-import prismaMock from './prisma-mock';
+} from '../app/controllers/users.controller';
+import prismaMock from './mocks/prisma-mock';
 
 // Mock user object
 const user: User = {

@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express-serve-static-core';
-import { ErrorHandler } from '../types/error';
 
-// Ignore the ts error for now
-export const errorHandler = (
+interface ErrorHandler extends Error {
+  status?: number;
+}
+
+const errorHandler = (
   err: ErrorHandler,
   req: Request,
   res: Response,

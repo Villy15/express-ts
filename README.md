@@ -86,6 +86,5 @@ You can access the REST API of the server using the following endpoints:
 
 ## Significant Tools
 
-- [cors]() - allows server to respond to requests from different origins
-- [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) - Password hashing
-- [helmet](https://helmetjs.github.io) - helps secure Express apps by setting HTTP response headers.
+- [prisma] () - Database ORM
+- [jest] () - Unit Tests

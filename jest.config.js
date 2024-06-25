@@ -3,11 +3,11 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   clearMocks: true,
-  setupFilesAfterEnv: ['./src/__tests__/prisma-mock.ts'],
+  setupFilesAfterEnv: ['./src/tests/mocks/prisma-mock.ts'],
   testPathIgnorePatterns: [
     './dist',
     './node_modules',
-    './src/__tests__/prisma-mock.ts',
+    './src/tests/mocks/prisma-mock.ts',
   ],
   verbose: true,
 };
