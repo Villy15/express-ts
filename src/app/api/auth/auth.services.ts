@@ -1,13 +1,10 @@
 import prisma from '../../../prisma/prisma-client';
+import { LoginSchema, RegisterSchema } from '../../../schemas/auth.schema';
 import HttpError from '../../../utils/http-error';
 
-type loginData = {
-  email: string;
-  password: string;
-};
-
-export const login = async (loginData: loginData) => {
+export const login = async (loginData: LoginSchema['body']) => {
   const { email, password } = loginData;
+
   const user = await prisma.user.findUnique({
     where: {
       email,
@@ -27,14 +24,13 @@ type registerData = {
   password: string;
 };
 
-export const register = async (registerData: registerData) => {
+export const register = async (registerData: RegisterSchema['body']) => {
   const { email, name, password } = registerData;
+
   const user = await prisma.user.create({
     data: {
       email,
       name,
-      //! Fix late
-      // @ts-ignore
       password,
     },
   });

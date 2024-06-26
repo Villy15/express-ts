@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { Request } from 'express-serve-static-core';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+import validateResource from '../../../middlewares/validate.middleware';
+import { LoginSchema, loginSchema } from '../../../schemas/auth.schema';
 import handleError from '../../../utils/handle-error';
 import { login, register } from './auth.services';
 
@@ -62,13 +64,11 @@ const router = Router();
  */
 router.post(
   '/auth/login',
+  validateResource(loginSchema),
   async (
-    req: Request<{
-      username: string;
-      password: string;
-    }>,
-    res,
-    next
+    req: Request<{}, {}, LoginSchema['body']>,
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const result = await login(req.body);

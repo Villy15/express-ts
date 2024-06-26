@@ -14,18 +14,21 @@ const user: User = {
   id: 1,
   name: 'John Doe',
   email: 'john@email.com',
+  password: 'password',
   last_name: 'Doe',
 };
 
 const userInput: Prisma.UserCreateInput = {
   name: 'Jame Doe',
   email: 'jame@email.com',
+  password: 'password',
   last_name: 'Doe',
 };
 
 const createdUser: User = {
   id: 1,
   name: 'Jame Doe',
+  password: 'password',
   email: 'jame@email.com',
   last_name: 'Doe',
 };

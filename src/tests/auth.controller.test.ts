@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { login } from '../app/api/auth/auth.services';
+import { login, register } from '../app/api/auth/auth.services';
 import prismaMock from './mocks/prisma-mock';
 
 // Mock user object
@@ -7,6 +7,7 @@ const user: User = {
   id: 1,
   name: 'Adrian',
   email: 'adrianvill07@gmail.com',
+  password: 'password',
   last_name: 'Villalba',
 };
 
@@ -20,7 +21,9 @@ describe('Auth Services', () => {
         password: 'password',
       });
 
-      expect(result).toEqual(user);
+      expect(result).toEqual({
+        token: expect.any(String),
+      });
       expect(prismaMock.user.findUnique).toHaveBeenCalled();
     });
 
@@ -35,6 +38,24 @@ describe('Auth Services', () => {
           password: 'password',
         })
       ).rejects.toThrow('User not found');
+    });
+  });
+
+  describe('register', () => {
+    it.todo(
+      'should create a new user and return a token if user does not exist'
+    );
+
+    it.skip('should throw an error if user already exists', async () => {
+      prismaMock.user.findUnique.mockResolvedValue(user);
+
+      await expect(
+        register({
+          name: user.name as string,
+          email: user.email,
+          password: 'password',
+        })
+      ).rejects.toThrow('User already exists');
     });
   });
 });

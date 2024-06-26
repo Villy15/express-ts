@@ -13,13 +13,13 @@ const errorHandler = (
 ) => {
   if (err.status) {
     log.error({
-      err: {
+      error: {
         message: err.message,
-        status: err.status,
         stack: err.stack,
+        status: err.status,
       },
     });
-    res.status(err.status).send({ error: err.message });
+    res.status(err.status).send(err.message);
   } else {
     log.error({
       err: {
