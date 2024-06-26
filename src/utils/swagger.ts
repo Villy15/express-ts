@@ -4,6 +4,9 @@ import swaggerUi from 'swagger-ui-express';
 import { version } from '../../package.json';
 import log from './logger';
 
+/**
+ * Swagger documentation options
+ */
 const swaggerTags = [
   {
     name: 'posts',
@@ -12,6 +15,10 @@ const swaggerTags = [
   {
     name: 'users',
     description: 'user endpoints',
+  },
+  {
+    name: 'auth',
+    description: 'authentication endpoints',
   },
 ];
 
