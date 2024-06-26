@@ -1,5 +1,32 @@
 import { z } from 'zod';
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     AuthLogin:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: 'johndoe@gmail.com'
+ *         password:
+ *           type: string
+ *           example: 'password123'
+ *     AuthRegister:
+ *        type: object
+ *        properties:
+ *          email:
+ *            type: string
+ *            example: 'johndoe@gmail.com'
+ *          password:
+ *            type: string
+ *            example: 'password123'
+ *          name:
+ *            type: string
+ *            example: 'John Doe'
+ */
+
 export const loginSchema = z.object({
   body: z.object({
     email: z
@@ -41,5 +68,5 @@ export const registerSchema = z.object({
   }),
 });
 
-export type LoginSchema = z.infer<typeof loginSchema>;
-export type RegisterSchema = z.infer<typeof registerSchema>;
+export type LoginSchema = z.infer<typeof loginSchema>['body'];
+export type RegisterSchema = z.infer<typeof registerSchema>['body'];

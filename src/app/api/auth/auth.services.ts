@@ -1,8 +1,8 @@
 import prisma from '../../../prisma/prisma-client';
-import { LoginSchema, RegisterSchema } from '../../../schemas/auth.schema';
 import HttpError from '../../../utils/http-error';
+import { LoginSchema, RegisterSchema } from '../../schemas/auth.schema';
 
-export const login = async (loginData: LoginSchema['body']) => {
+export const login = async (loginData: LoginSchema) => {
   const { email, password } = loginData;
 
   const user = await prisma.user.findUnique({
@@ -15,25 +15,24 @@ export const login = async (loginData: LoginSchema['body']) => {
     throw new HttpError('User not found', 404);
   }
 
-  return { token: 'token' };
+  // check if password is correct
+  if (user?.password !== password) {
+    throw new HttpError('Invalid credentials', 401);
+  }
+
+  return { token: 'token', user };
 };
 
-type registerData = {
-  email: string;
-  name: string;
-  password: string;
-};
-
-export const register = async (registerData: RegisterSchema['body']) => {
+export const register = async (registerData: RegisterSchema) => {
   const { email, name, password } = registerData;
 
   const user = await prisma.user.create({
     data: {
       email,
-      name,
       password,
+      name,
     },
   });
 
-  return { token: 'token' };
+  return { token: 'token', user };
 };

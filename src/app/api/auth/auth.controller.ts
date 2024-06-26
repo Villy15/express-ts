@@ -1,41 +1,16 @@
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
 import validateResource from '../../../middlewares/validate.middleware';
-import { LoginSchema, loginSchema } from '../../../schemas/auth.schema';
 import handleError from '../../../utils/handle-error';
+import {
+  LoginSchema,
+  RegisterSchema,
+  loginSchema,
+  registerSchema,
+} from '../../schemas/auth.schema';
 import { login, register } from './auth.services';
 
 const router = Router();
-
-/**
- * @openapi
- * components:
- *   schemas:
- *     AuthLogin:
- *       type: object
- *       properties:
- *         email:
- *           type: string
- *           example: 'johndoe@gmail.com'
- *         password:
- *           type: string
- *           example: 'password123'
- *     AuthToken:
- *        type: object
- *        properties:
- *          token:
- *            type: string
- *            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyMzUwNjMzN30.7'
- *     AuthRegister:
- *        type: object
- *        properties:
- *          email:
- *            type: string
- *          password:
- *            type: string
- *          name:
- *            type: string
- */
 
 /**
  * @openapi
@@ -66,7 +41,7 @@ router.post(
   '/auth/login',
   validateResource(loginSchema),
   async (
-    req: Request<{}, {}, LoginSchema['body']>,
+    req: Request<{}, {}, LoginSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -105,14 +80,22 @@ router.post(
  *       500:
  *         description: Internal Server Error
  */
-router.post('/auth/register', async (req, res, next) => {
-  try {
-    const result = await register(req.body);
+router.post(
+  '/auth/register',
+  validateResource(registerSchema),
+  async (
+    req: Request<{}, {}, RegisterSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const result = await register(req.body);
 
-    res.status(201).send(result);
-  } catch (err) {
-    handleError(err, next);
+      res.status(201).send(result);
+    } catch (err) {
+      handleError(err, next);
+    }
   }
-});
+);
 
 export default router;

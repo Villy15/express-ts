@@ -80,7 +80,7 @@ const options: swaggerJsdoc.Options = {
     },
   },
 
-  apis: ['./src/app/api/**/*.ts'],
+  apis: ['./src/app/**/*.ts', './src/prisma/schema.swagger.ts'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

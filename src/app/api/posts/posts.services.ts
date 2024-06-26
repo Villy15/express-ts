@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
 import prisma from '../../../prisma/prisma-client';
 import HttpError from '../../../utils/http-error';
+import { PostCreateInput } from '../../schemas/posts.schema';
 
 export const getPosts = async () => {
   const posts = await prisma.post.findMany();
@@ -26,9 +26,8 @@ export const getPost = async (id: number) => {
   return post;
 };
 
-export const createPost = async (postData: Prisma.PostCreateInput) => {
-  // @ts-ignore
-  const { title, content, email } = postData;
+export const createPost = async (postData: PostCreateInput) => {
+  const { title, content, id } = postData;
 
   const post = await prisma.post.create({
     data: {
@@ -36,7 +35,7 @@ export const createPost = async (postData: Prisma.PostCreateInput) => {
       content: content,
       author: {
         connect: {
-          email: email,
+          id: id,
         },
       },
     },

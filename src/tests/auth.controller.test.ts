@@ -23,6 +23,7 @@ describe('Auth Services', () => {
 
       expect(result).toEqual({
         token: expect.any(String),
+        user,
       });
       expect(prismaMock.user.findUnique).toHaveBeenCalled();
     });

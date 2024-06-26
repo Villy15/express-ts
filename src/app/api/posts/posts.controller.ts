@@ -1,39 +1,12 @@
-import { Post, Prisma } from '@prisma/client';
+import { Post } from '@prisma/client';
 import { Router } from 'express';
-import { Request, Response } from 'express-serve-static-core';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+import validateResource from '../../../middlewares/validate.middleware';
 import handleError from '../../../utils/handle-error';
+import { PostCreateInput, postCreateSchema } from '../../schemas/posts.schema';
 import { createPost, getPost, getPosts } from './posts.services';
 
 const router = Router();
-
-/**
- * @openapi
- * components:
- *   schemas:
- *     Post:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         title:
- *           type: string
- *         content:
- *           type: string
- *         published:
- *           type: boolean
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *         viewCount:
- *           type: integer
- *         authorId:
- *           type: integer
- *
- *
- */
 
 /**
  * @openapi
@@ -113,18 +86,7 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               content:
- *                 type: string
- *               email:
- *                type: string
- *             required:
- *               - title
- *               - content
- *               - email
+ *             $ref: '#/components/schemas/PostCreate'
  *     responses:
  *       201:
  *         description: The created post
@@ -137,10 +99,11 @@ router.get(
  */
 router.post(
   '/posts',
+  validateResource(postCreateSchema),
   async (
-    req: Request<{}, {}, Prisma.PostCreateInput>,
+    req: Request<{}, {}, PostCreateInput>,
     res: Response<Post>,
-    next
+    next: NextFunction
   ) => {
     try {
       const result = await createPost(req.body);

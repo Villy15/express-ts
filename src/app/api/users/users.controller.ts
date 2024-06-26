@@ -1,55 +1,14 @@
-import { Prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { Router } from 'express';
-import { Request, Response } from 'express-serve-static-core';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
+import validateResource from '../../../middlewares/validate.middleware';
 import prisma from '../../../prisma/prisma-client';
 import handleError from '../../../utils/handle-error';
-import {
-  createUser,
-  deleteUser,
-  getUser,
-  getUsers,
-  updateUser,
-} from './users.services';
+import { UserUpdateInput, userUpdateSchema } from '../../schemas/users.schema';
+import { deleteUser, getUser, getUsers, updateUser } from './users.services';
 
 const router = Router();
-
-/**
- * @openapi
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         email:
- *           type: string
- *         name:
- *           type: string
- *         posts:
- *           type: array
- *           items:
- *            $ref: '#/components/schemas/Post'
- *     UserInput:
- *       type: object
- *       properties:
- *         email:
- *           type: string
- *           example: 'johndoe@gmail.com'
- *         name:
- *           type: string
- *           example: 'John Doe'
- *     UserUpdate:
- *      type: object
- *      properties:
- *         email:
- *           type: string
- *           example: 'johndoe@gmail.com'
- *         name:
- *            type: string
- *            example: 'James Worthington'
- */
 
 /**
  * @openapi
@@ -122,48 +81,6 @@ router.get(
 
 /**
  * @openapi
- * /api/users:
- *   post:
- *     summary: Create a new users
- *     tags:
- *       - users
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserInput'
- *     responses:
- *       201:
- *         description: users created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Bad Request
- *       500:
- *         description: Internal Server Error
- */
-router.post(
-  '/users',
-  async (
-    req: Request<{}, {}, Prisma.UserCreateInput>,
-    res: Response<User>,
-    next
-  ) => {
-    try {
-      const result = await createUser(req.body);
-
-      res.status(201).send(result);
-    } catch (err) {
-      handleError(err, next);
-    }
-  }
-);
-
-/**
- * @openapi
  * /api/users/{id}:
  *   put:
  *     summary: Update users by id
@@ -198,10 +115,11 @@ router.post(
  */
 router.put(
   '/users/:id',
+  validateResource(userUpdateSchema),
   async (
-    req: Request<{ id: string }, {}, Prisma.UserUpdateInput>,
+    req: Request<{ id: string }, {}, UserUpdateInput>,
     res: Response<User>,
-    next
+    next: NextFunction
   ) => {
     try {
       const result = await updateUser(Number(req.params.id), req.body);
