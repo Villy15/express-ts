@@ -8,7 +8,7 @@ import logger from './middlewares/logger.middleware';
 import notFound from './middlewares/not-found.middlware';
 import sessionConfig from './middlewares/session.middleware';
 
-import router from './app/routes/routes';
+import router from './app/routes';
 import log from './utils/logger';
 import swaggerDocs from './utils/swagger';
 

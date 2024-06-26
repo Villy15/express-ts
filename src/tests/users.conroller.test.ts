@@ -1,8 +1,8 @@
 import { User } from '@prisma/client';
 
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { getUser, getUsers, updateUser } from '../app/api/users/users.services';
-import { UserUpdateInput } from '../app/schemas/users.schema';
+import { UserUpdateInput } from '../app/users/users.schema';
+import { getUser, getUsers, updateUser } from '../app/users/users.services';
 import prismaMock from './mocks/prisma-mock';
 
 // Mock user object

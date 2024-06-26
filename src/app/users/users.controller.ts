@@ -2,10 +2,10 @@ import { User } from '@prisma/client';
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
 
-import validateResource from '../../../middlewares/validate.middleware';
-import prisma from '../../../prisma/prisma-client';
-import handleError from '../../../utils/handle-error';
-import { UserUpdateInput, userUpdateSchema } from '../../schemas/users.schema';
+import validateResource from '../../middlewares/validate.middleware';
+import prisma from '../../prisma/prisma-client';
+import handleError from '../../utils/handle-error';
+import { UserUpdateInput, userUpdateSchema } from './users.schema';
 import { deleteUser, getUser, getUsers, updateUser } from './users.services';
 
 const router = Router();

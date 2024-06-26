@@ -1,9 +1,9 @@
 import { Post } from '@prisma/client';
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
-import validateResource from '../../../middlewares/validate.middleware';
-import handleError from '../../../utils/handle-error';
-import { PostCreateInput, postCreateSchema } from '../../schemas/posts.schema';
+import validateResource from '../../middlewares/validate.middleware';
+import handleError from '../../utils/handle-error';
+import { PostCreateInput, postCreateSchema } from './posts.schema';
 import { createPost, getPost, getPosts } from './posts.services';
 
 const router = Router();

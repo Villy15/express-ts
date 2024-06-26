@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { login, register } from '../app/api/auth/auth.services';
+import { login, register } from '../app/auth/auth.services';
 import prismaMock from './mocks/prisma-mock';
 
 // Mock user object

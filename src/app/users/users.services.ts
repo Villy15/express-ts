@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
-import prisma from '../../../prisma/prisma-client';
-import HttpError from '../../../utils/http-error';
-import { UserUpdateInput } from '../../schemas/users.schema';
+import prisma from '../../prisma/prisma-client';
+import HttpError from '../../utils/http-error';
+import { UserUpdateInput } from './users.schema';
 
 export const getUsers = async () => {
   const users = await prisma.user.findMany();

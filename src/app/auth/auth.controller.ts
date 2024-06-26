@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
-import validateResource from '../../../middlewares/validate.middleware';
-import handleError from '../../../utils/handle-error';
+import validateResource from '../../middlewares/validate.middleware';
+import handleError from '../../utils/handle-error';
 import {
   LoginSchema,
   RegisterSchema,
   loginSchema,
   registerSchema,
-} from '../../schemas/auth.schema';
+} from './auth.schema';
 import { login, register } from './auth.services';
 
 const router = Router();

@@ -1,6 +1,6 @@
-import prisma from '../../../prisma/prisma-client';
-import HttpError from '../../../utils/http-error';
-import { PostCreateInput } from '../../schemas/posts.schema';
+import prisma from '../../prisma/prisma-client';
+import HttpError from '../../utils/http-error';
+import { PostCreateInput } from './posts.schema';
 
 export const getPosts = async () => {
   const posts = await prisma.post.findMany();

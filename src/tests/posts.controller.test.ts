@@ -1,6 +1,6 @@
 import { Post } from '@prisma/client';
 
-import { getPost, getPosts } from '../app/api/posts/posts.services';
+import { getPost, getPosts } from '../app/posts/posts.services';
 import prismaMock from './mocks/prisma-mock';
 
 // Mock post object

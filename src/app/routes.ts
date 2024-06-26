@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import authController from '../api/auth/auth.controller';
-import postsController from '../api/posts/posts.controller';
-import usersController from '../api/users/users.controller';
+import authController from './auth/auth.controller';
+import postsController from './posts/posts.controller';
+import usersController from './users/users.controller';
 
 const controllers = [postsController, usersController, authController];
 

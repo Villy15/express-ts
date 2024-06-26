@@ -1,6 +1,6 @@
-import prisma from '../../../prisma/prisma-client';
-import HttpError from '../../../utils/http-error';
-import { LoginSchema, RegisterSchema } from '../../schemas/auth.schema';
+import prisma from '../../prisma/prisma-client';
+import HttpError from '../../utils/http-error';
+import { LoginSchema, RegisterSchema } from './auth.schema';
 
 export const login = async (loginData: LoginSchema) => {
   const { email, password } = loginData;
